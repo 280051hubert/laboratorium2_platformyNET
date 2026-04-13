@@ -23,11 +23,11 @@ class Program
             string? input = Console.ReadLine()?.Trim();
             if (string.IsNullOrEmpty(input)) continue;
 
-            // --- EXIT ---
+
             if (input.ToLower() == "exit")
                 break;
 
-            // --- LIST ---
+
             if (input.ToLower() == "list")
             {
                 var records = db.WeatherRecords.Include(r => r.City).ToList();
@@ -38,7 +38,7 @@ class Program
                 continue;
             }
 
-            // --- SORT ---
+
             if (input.ToLower() == "sort")
             {
                 var sorted = db.WeatherRecords
@@ -56,7 +56,7 @@ class Program
                 continue;
             }
 
-            // --- FILTER <min_temp> ---
+
             if (input.ToLower().StartsWith("filter "))
             {
                 string[] parts = input.Split(' ');
@@ -78,7 +78,7 @@ class Program
                 continue;
             }
 
-            // --- DELETE <miasto> ---
+
             if (input.ToLower().StartsWith("delete "))
             {
                 string cityName = input.Substring(7).Trim();
@@ -99,7 +99,7 @@ class Program
                 continue;
             }
 
-            // --- POBIERZ POGODĘ DLA MIASTA ---
+
             string requestedCity = input;
             var existingCity = db.Cities
                 .Include(c => c.WeatherRecords)
@@ -122,7 +122,7 @@ class Program
             }
             else
             {
-                // Brak w bazie — odpytaj API i zapisz
+
                 string url = $"https://api.openweathermap.org/data/2.5/weather" +
                              $"?q={requestedCity}&appid={apiKey}&units=metric&lang=pl";
                 try
@@ -132,7 +132,7 @@ class Program
 
                     if (weather == null) { Console.WriteLine("Błąd parsowania odpowiedzi."); continue; }
 
-                    // Dodaj miasto jeśli nie istnieje
+
                     if (existingCity == null)
                     {
                         existingCity = new City { Name = weather.name };
@@ -140,7 +140,7 @@ class Program
                         db.SaveChanges(); // żeby CityId był dostępny
                     }
 
-                    // Dodaj rekord pogodowy
+
                     var record = new WeatherRecord
                     {
                         CityId = existingCity.CityId,
@@ -170,7 +170,7 @@ class Program
     }
 }
 
-// ---- Klasy do deserializacji JSON z API (bez zmian) ----
+
 public class WeatherResponse
 {
     public Main main { get; set; }
